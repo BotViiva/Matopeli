@@ -16,16 +16,30 @@ class Main:
 
     def update(self):
         self.mato.mato_liikutus()
-        self.törmäykset()
+        self.omenan_syönti()
+        self.tarkista_törmäys()
         
     def piirrä_elementit(self):
         self.omena.piirrä_omena()
         self.mato.piirrä_mato()
 
-    def törmäykset(self):
+    def omenan_syönti(self):
         if self.omena.pos == self.mato.keho[0]:
             self.omena.uusi_sijainti()
             self.mato.lisää_pituus()
+    
+    def tarkista_törmäys(self):
+        if not 0 <= self.mato.keho[0].x < solu_numero or not 0 <= self.mato.keho[0].y < solu_numero:
+            self.peli_ohi()
+
+        for block in self.mato.keho[1:]:
+            if block == self.mato.keho[0]:
+                self.peli_ohi()
+
+    def peli_ohi(self):
+        pygame.quit
+        exit()
+        
 
 class Omena:
     def __init__(self) -> None:
@@ -40,9 +54,11 @@ class Omena:
         self.y = (randint(0,760))
         self.pos = Vector2(self.x//solu_koko, self.y//solu_koko)
 
+    
+
 class Mato():
     def __init__(self):
-        self.keho = [Vector2(5,10),Vector2(6,10),Vector2(7,10)]
+        self.keho = [Vector2(7,10),Vector2(6,10),Vector2(5,10)]
         self.suunta = Vector2(1,0)
     
     def piirrä_mato(self):
