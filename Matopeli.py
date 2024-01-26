@@ -62,6 +62,7 @@ class Mato():
         self.keho = [Vector2(7,10),Vector2(6,10),Vector2(5,10)]
         self.suunta = Vector2(1,0)
         self.nopeus = 150
+
     def piirrä_mato(self):
         for block in self.keho:
             x_pos = int(block.x * solu_koko)
@@ -79,6 +80,7 @@ class Mato():
         keho_kopio = self.keho[:]
         keho_kopio.append(keho_kopio[-1] + self.suunta)
         self.keho = keho_kopio[:]
+ 
     def lisää_nopeus(self):
         if self.nopeus >100:
             self.nopeus -= 5
@@ -88,6 +90,9 @@ class Mato():
             self.nopeus -= 1
         else:
             pass
+
+    def päivitä_suunta(self, muutos):
+        self.suunta = muutos
         
 
 pygame.init()
@@ -103,18 +108,17 @@ while running:
             running = False
             exit()
         if event.type == SCREEN_UPDATE:
-            main_peli.update()
             pygame.time.set_timer(SCREEN_UPDATE, main_peli.mato.nopeus)
-            print(main_peli.mato.nopeus)
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] and main_peli.mato.suunta != Vector2(0,1):
-            main_peli.mato.suunta = Vector2(0,-1)
-        if keys[pygame.K_DOWN] and main_peli.mato.suunta != Vector2(0,-1):
-            main_peli.mato.suunta = Vector2(0,1)
-        if keys[pygame.K_RIGHT] and main_peli.mato.suunta != Vector2(-1,0):
-            main_peli.mato.suunta = Vector2(1,0)
-        if keys[pygame.K_LEFT] and main_peli.mato.suunta != Vector2(1,0):
-            main_peli.mato.suunta = Vector2(-1,0)
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_UP] and main_peli.mato.suunta != Vector2(0,1):
+                main_peli.mato.päivitä_suunta(Vector2(0,-1))
+            if keys[pygame.K_DOWN] and main_peli.mato.suunta != Vector2(0,-1):
+                main_peli.mato.päivitä_suunta(Vector2(0,1))
+            if keys[pygame.K_RIGHT] and main_peli.mato.suunta != Vector2(-1,0):
+                main_peli.mato.päivitä_suunta(Vector2(1,0))
+            if keys[pygame.K_LEFT] and main_peli.mato.suunta != Vector2(1,0):
+                main_peli.mato.päivitä_suunta(Vector2(-1,0))
+            main_peli.update()
 
     screen.fill ((0, 200, 0))
     main_peli.piirrä_elementit()
