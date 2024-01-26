@@ -24,17 +24,21 @@ class Main:
 
     def törmäykset(self):
         if self.omena.pos == self.mato.keho[0]:
-            print("nomnomnom")
+            self.omena.uusi_sijainti()
+            self.mato.lisää_pituus()
 
 class Omena:
     def __init__(self) -> None:
-        self.x = (randint(0,760))
-        self.y = (randint(0,760))
-        self.pos = Vector2(self.x//solu_koko, self.y//solu_koko)
+        self.uusi_sijainti()
        
     def piirrä_omena(self):
         omena_rect = pygame.Rect(int(self.pos.x * solu_koko),int(self.pos.y * solu_koko), solu_koko,solu_koko)
         pygame.draw.rect(screen, (255, 0, 0), omena_rect)
+
+    def uusi_sijainti(self):
+        self.x = (randint(0,760))
+        self.y = (randint(0,760))
+        self.pos = Vector2(self.x//solu_koko, self.y//solu_koko)
 
 class Mato():
     def __init__(self):
@@ -51,6 +55,11 @@ class Mato():
     
     def mato_liikutus(self):
         keho_kopio = self.keho[:-1]
+        keho_kopio.insert(0,keho_kopio[0] + self.suunta)
+        self.keho = keho_kopio[:]
+
+    def lisää_pituus(self):
+        keho_kopio = self.keho[:]
         keho_kopio.insert(0,keho_kopio[0] + self.suunta)
         self.keho = keho_kopio[:]
         
