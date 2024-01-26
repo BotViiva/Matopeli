@@ -25,8 +25,9 @@ class Main:
 
     def omenan_syönti(self):
         if self.omena.pos == self.mato.keho[0]:
-            self.omena.uusi_sijainti()
             self.mato.lisää_pituus()
+            self.omena.uusi_sijainti()
+            self.mato.lisää_nopeus()
     
     def tarkista_törmäys(self):
         if not 0 <= self.mato.keho[0].x < solu_numero or not 0 <= self.mato.keho[0].y < solu_numero:
@@ -60,7 +61,7 @@ class Mato():
     def __init__(self):
         self.keho = [Vector2(7,10),Vector2(6,10),Vector2(5,10)]
         self.suunta = Vector2(1,0)
-    
+        self.nopeus = 150
     def piirrä_mato(self):
         for block in self.keho:
             x_pos = int(block.x * solu_koko)
@@ -76,17 +77,25 @@ class Mato():
 
     def lisää_pituus(self):
         keho_kopio = self.keho[:]
-        keho_kopio.insert(0,keho_kopio[0] + self.suunta)
+        keho_kopio.append(keho_kopio[-1] + self.suunta)
         self.keho = keho_kopio[:]
-        
-
+    def lisää_nopeus(self):
+        if self.nopeus >100:
+            self.nopeus -= 5
+        elif self.nopeus >80:
+            self.nopeus -= 2
+        elif self.nopeus >70:
+            self.nopeus -= 1
+        else:
+            pass
         
 
 pygame.init()
 
 main_peli = Main()
 SCREEN_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(SCREEN_UPDATE, 150)
+pygame.time.set_timer(SCREEN_UPDATE, main_peli.mato.nopeus)
+
 
 while running:
     for event in pygame.event.get():
@@ -95,6 +104,8 @@ while running:
             exit()
         if event.type == SCREEN_UPDATE:
             main_peli.update()
+            pygame.time.set_timer(SCREEN_UPDATE, main_peli.mato.nopeus)
+            print(main_peli.mato.nopeus)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP] and main_peli.mato.suunta != Vector2(0,1):
             main_peli.mato.suunta = Vector2(0,-1)
