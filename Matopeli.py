@@ -13,21 +13,25 @@ class Main:
     def __init__(self) -> None:
         self.mato = Mato()
         self.omena = Omena()
+        self.pisteet = 0
 
     def update(self):
         self.mato.mato_liikutus()
         self.omenan_syönti()
         self.tarkista_törmäys()
+
         
     def piirrä_elementit(self):
         self.omena.piirrä_omena()
         self.mato.piirrä_mato()
+        self.piirrä_pisteet()
 
     def omenan_syönti(self):
         if self.omena.pos == self.mato.keho[0]:
             self.mato.lisää_pituus()
             self.omena.uusi_sijainti()
             self.mato.lisää_nopeus()
+            self.pisteet += 1
     
     def tarkista_törmäys(self):
         if not 0 <= self.mato.keho[0].x < solu_numero or not 0 <= self.mato.keho[0].y < solu_numero:
@@ -40,6 +44,12 @@ class Main:
     def peli_ohi(self):
         pygame.quit
         exit()
+
+    def piirrä_pisteet(self):
+        
+        pisteet_text = fontti.render(str(self.pisteet), (255,255,255), (0,0,0))
+        screen.blit(pisteet_text, (760,760))
+
         
 
 class Omena:
@@ -61,7 +71,7 @@ class Mato():
     def __init__(self):
         self.keho = [Vector2(7,10),Vector2(6,10),Vector2(5,10)]
         self.suunta = [Vector2(1,0)]
-        self.nopeus = 150 #vakio 150
+        self.nopeus = 150
         
         
 
@@ -106,11 +116,11 @@ class Mato():
     
         
 pygame.init()
+fontti = pygame.font.Font(None, 60)
 main_peli = Main()
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE, main_peli.mato.nopeus)
 
-päivityskerrat = 0
 
 
 while running:
@@ -123,35 +133,25 @@ while running:
 
             if len(main_peli.mato.suunta) > 1 and main_peli.mato.suunta[0] == main_peli.mato.suunta[1]:
                 main_peli.mato.suunta.pop(1)
+            if len(main_peli.mato.suunta) > 2 and main_peli.mato.suunta[0] == main_peli.mato.suunta[2]:
+                main_peli.mato.suunta.pop(2)
             if len(main_peli.mato.suunta) > 1:
                 main_peli.mato.suunta.pop(0)
             main_peli.update()
 
-            päivityskerrat +=1
-            print("päivitys nro ",päivityskerrat,main_peli.mato.suunta)
+            print(main_peli.pisteet)
 
         
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP] and main_peli.mato.suunta[0] != Vector2(0,1) and main_peli.mato.suunta[-1] != Vector2(0,-1) and len(main_peli.mato.suunta) <4:
             main_peli.mato.suunta.append(Vector2(0,-1))
-            #main_peli.mato.suunta = (0,-1)
-            print("ylös",main_peli.mato.suunta)
-            #pygame.event.pump()
         if keys[pygame.K_DOWN] and main_peli.mato.suunta[0] != Vector2(0,-1) and main_peli.mato.suunta[-1] != Vector2(0,1)and len(main_peli.mato.suunta) <4:
             main_peli.mato.suunta.append(Vector2(0,1))
-            #main_peli.mato.suunta = (0,1)
-            print("alas",main_peli.mato.suunta)
-            #pygame.event.pump()
         if keys[pygame.K_RIGHT] and main_peli.mato.suunta[0] != Vector2(-1,0) and main_peli.mato.suunta[-1] != Vector2(1,0)and len(main_peli.mato.suunta) <4:
             main_peli.mato.suunta.append(Vector2(1,0))
-            #main_peli.mato.suunta = (1,0)
-            print("oikea",main_peli.mato.suunta)
-            #pygame.event.pump()
         if keys[pygame.K_LEFT] and main_peli.mato.suunta[0] != Vector2(1,0) and main_peli.mato.suunta[-1] != Vector2(-1,0)and len(main_peli.mato.suunta) <4:
             main_peli.mato.suunta.append(Vector2(-1,0))
-            #main_peli.mato.suunta = (-1,0)
-            print("vasen",main_peli.mato.suunta)
-            #pygame.event.pump()
+
     main_peli.mato.tarkista_suunta()
     screen.fill ((0, 200, 0))
     main_peli.piirrä_elementit()
